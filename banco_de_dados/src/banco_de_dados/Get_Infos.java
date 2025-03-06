@@ -18,7 +18,7 @@ public class Get_Infos {
 			
 			if(quant_databases.equals("0")) { // Caso o numero lido for "0" ele retorna pois não tem Databases
 				leitor.close();
-				return new String[]{"-2"}; // NoDatabaseAvaliable
+				return new String[]{"-2"}; // NoDatabaseAvailable
 			}
 			
 			int	quant_lines = (int) Files.lines(Paths.get("src", "banco_de_dados", "bd_root", "bd_info")).count(); // Puxa a quantidade de linhas
