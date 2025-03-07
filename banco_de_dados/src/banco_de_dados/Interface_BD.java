@@ -23,7 +23,7 @@ public class Interface_BD {
 					System.out.print(false);
 					break;
 				case 2:
-					System.out.print(false);
+					bd.excluir_database();
 					break;
 				case 3:
 					System.out.print(false);
