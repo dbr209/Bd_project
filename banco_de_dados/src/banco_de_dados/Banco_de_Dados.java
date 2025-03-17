@@ -1,6 +1,7 @@
 package banco_de_dados;
 
 import java.io.IOException;
+import java.io.File;
 import java.lang.Integer;
 
 public class Banco_de_Dados {
