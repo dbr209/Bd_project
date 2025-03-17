@@ -20,40 +20,33 @@ public class Banco_de_Dados {
 			System.out.println("IOException");
 		}
 	}
-	public void excluir_database(Scanner leitor){
-		System.out.println("Informe qual arquivo você deseja excluir: ");
-		String caminho = leitor.nextLine();
+	    public static void excluir_database(Scanner leitor) {
+        System.out.println("Qual arquivo você deseja excluir: "); //Pergunta ao usuário qual arquivo deseja excluir
+        String caminho = leitor.nextLine(); //Lê o arquivo
 
-		File arquivo = new File(caminho); //Instanciona um novo objeto file que busca o caminho do arquivo
-		try {
-			if(!arquivo.exists()){ //Verifca se o arquivo não existe, pois está com "!" de negação
-				System.out.println("Não existe arquivo com esse nome.");
-				return;
-			}
-			System.out.println("Você deseja realmente excluir esse arquivo?(sim/não): ");
-			String confirmacao = leitor.nextLine();
+        File arquivo = new File(caminho); //Instanciona um objeto do arquivo lido
 
-			if(confirmacao.equalsIgnoreCase("sim")){ //Verifica se o usuário digitou "sim" e ignora se foi com letra maiúscula ou minúscula
-				System.out.println("Insira a senha para remover: ");
-				String senha = leitor.nextLine();
+        try {
+            if (!arquivo.exists()) { // Verifica se o arquivo não existe
+                System.out.println("Não existe nenhum arquivo com esse nome.");
+                return;
+            }
+            System.out.println("Informe a senha do arquivo: "); //Se o arquivo existir, pergunta a senha para exclusão
+            String senha = leitor.nextLine();
 
-				if(senha.equals("teste1234!")){ //Verifica se o usuário digitou "teste1234!", se sim ele deleta o arquivo e informa ao usuário
-					arquivo.delete();
-					System.out.println("Arquivo excluído.");
-				}else{
-					System.out.println("Senha incorreta, não foi excluído.");
-				}
-			}
-			else{
-			System.out.println("Exclusão cancelada.");
-			}
-
-		}catch (Exception e) { //Trata de possíveis excessões no código
-			System.out.println("-1");
-		}
-		leitor.close();
-	}
-	
+            if (senha.equals("teste1234!")) { // Verifica se a senha é igual a informada
+                if (arquivo.delete()) { // Tenta excluir o arquivo
+                    System.out.println("Arquivo excluído com sucesso.");
+                } else {
+                    System.out.println("Erro ao excluir o arquivo."); // Se "arquivo.delete()" der false imprime isso
+                }
+            } else {
+                System.out.println("Senha incorreta. O arquivo não foi excluído."); //Se a senha inserida for incorreta imprime isso
+            }
+        } catch (Exception e) {
+            System.out.println(-1); // Trata exceções
+        } 
+    }
 	public void listar_databases() {
 		System.out.println("");
 		
