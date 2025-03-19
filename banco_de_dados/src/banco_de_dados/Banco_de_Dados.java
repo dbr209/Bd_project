@@ -3,6 +3,9 @@ package banco_de_dados;
 import java.io.IOException;
 import java.io.File;
 import java.lang.Integer;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.Scanner;
 
 public class Banco_de_Dados {
 	
@@ -63,3 +66,129 @@ public class Banco_de_Dados {
 		}
 	}
 }
+
+	public void createDB() throws Exception {
+		
+		Scanner sc = new Scanner(System.in);
+		String nameDB; // Nome database
+		String password; // Senha
+		String nameFile; // Nome do arquivo
+		String path; // Caminho da pasta onda os databases estão
+		String pathDB; // Caminho do database
+		String pathInfo; // Caminho do arquivo txt info da pasta das databases
+		String pathInfoDB; // Caminho do arquivo txt info do database especifica
+		int quantity; // Quantidade de arquivos que serão criados em cada database
+		int i;
+		
+		System.out.println("Digite o nome do Database: ");
+		nameDB = sc.nextLine(); // Pede o nome da database
+		
+		path = "banco_de_dados\\src\\banco_de_dados\\bd_root";
+		pathDB = "banco_de_dados\\src\\banco_de_dados\\bd_root" + "\\" + nameDB;
+		pathInfo = "banco_de_dados\\src\\banco_de_dados\\bd_root" + "\\" + "bd_info.txt";
+		pathInfoDB = "banco_de_dados\\src\\banco_de_dados\\bd_root" + "\\" + nameDB + "\\" + "tabela_info.txt";
+		
+		File j = new File(path); // Objeto do tipo File para chamar o metodo listFiles()
+		File database = new File(pathDB); // Objeto do tipo File para trabalhar com a database
+		File info = new File(pathInfo); // Objeto do tipo File para trabalhar com o arquivo info da pasta das databases
+		File infoDB = new File(pathInfoDB); // Objeto do tipo File para trabalhar com o arquivo info da database especifica
+		BufferedWriter writer = new BufferedWriter(new FileWriter(pathInfo)); // Objeto do tipo BufferedWriter que sera usado para escrever no arquivo info
+		
+		//Cria um arquivo info para a pasta das databases
+		try {
+			info.createNewFile();
+		}
+		catch (Exception e) {
+			System.out.println("Erro ao criar o arquivo.");
+		}
+		
+		// Caso exista um database com nome identico ao que foi digitado, pede ao usuario um outro nome para o database
+		if(database.exists()) { 
+			
+			while(database.exists()) {
+				
+				System.out.println("Database ja existente.");
+				
+				System.out.println("Digite o nome do Database: ");
+				nameDB = sc.nextLine();
+				
+				pathDB = "banco_de_dados\\src\\banco_de_dados\\bd_root" + nameDB;
+				pathInfo = "banco_de_dados\\src\\banco_de_dados\\bd_root" + "\\" + "bd_info.txt";
+				pathInfoDB = "banco_de_dados\\src\\banco_de_dados\\bd_root" + "\\" + nameDB + "\\" + "tabela_info.txt";
+				
+				database = new File(pathDB);
+				info = new File(pathInfo);
+				infoDB = new File(pathInfoDB);
+			}
+		}
+			
+		// Caso não exista um database com nome identico ao que foi digitado, pede a senha do database ao usuario e cria a database
+		System.out.print("Digite sua senha: ");
+		password = sc.nextLine();
+		database.mkdir();
+		System.out.println("Database criado com sucesso.");
+		
+		// Diz a quantidade de database que existe na pasta das databases
+		i = j.listFiles().length;
+		i--;
+		
+		// Escreve a quantidade de databases no arquivo info
+		try {
+			writer.write(Integer.toString(i));
+			writer.close();
+		}
+		catch (Exception e) {
+			System.out.println("Erro ao escrever no arquivo arquivo.");
+		}
+		
+		// Pede o numero de arquivos que serão criados em cada database
+		System.out.println("Digite o numero de tabelas: ");
+		quantity = sc.nextInt();
+		
+		sc.nextLine();
+		
+		// Cria a quantidade de arquivos que foi solicitado
+		for(i=0;i<quantity;i++) {
+			File file = new File("banco_de_dados\\src\\banco_de_dados\\bd_root" + "\\" + nameDB);
+			
+			System.out.println("Digite o nome do arquivo: ");
+			nameFile = sc.nextLine();
+			
+			pathDB = "banco_de_dados\\src\\banco_de_dados\\bd_root" + "\\" + nameDB + "\\" + nameFile + ".txt";
+			file = new File(pathDB);
+			
+			try {
+				infoDB.createNewFile();
+			}
+			catch (Exception e) {
+				System.out.println("Erro ao criar o arquivo.");
+			}
+			
+			// Caso seja criado o arquivo é exibido uma mensagem de sucesso
+			try {
+				
+				if(file.createNewFile()) {
+					System.out.println("Arquivo criado com sucesso.");
+				}
+				
+				// Caso ja exista um arquivo com o mesmo nome, pede outro nome de arquivo para o usuario
+				else {
+					while(file.createNewFile()==false) {
+						System.out.println("Arquivo ja existente.");
+						
+						System.out.println("Digite o nome do arquivo: ");
+						nameFile = sc.nextLine();
+						
+						pathDB = "banco_de_dados\\src\\banco_de_dados\\bd_root" + "\\" + nameDB + "\\" + nameFile + ".txt";
+						file = new File(pathDB);
+					}
+					
+					System.out.println("Arquivo criado com sucesso.");
+				}
+			}
+			catch(Exception e) {
+				System.out.println("Erro ao criar o arquivo.");
+			}
+		}
+	sc.close();
+	}
