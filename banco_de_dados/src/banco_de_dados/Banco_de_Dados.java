@@ -24,9 +24,9 @@ public class Banco_de_Dados {
 			System.out.println("IOException");
 		}
 	}
-	    public static void excluir_database(Scanner leitor) {
+	public void excluir_database(Scanner sc) {
         System.out.println("Qual arquivo você deseja excluir: "); //Pergunta ao usuário qual arquivo deseja excluir
-        String caminho = leitor.nextLine(); //Lê o arquivo
+        String caminho = sc.nextLine(); //Lê o arquivo
 
         File arquivo = new File(caminho); //Instanciona um objeto do arquivo lido
 
@@ -36,9 +36,9 @@ public class Banco_de_Dados {
                 return;
             }
             System.out.println("Informe a senha do arquivo: "); //Se o arquivo existir, pergunta a senha para exclusão
-            String senha = leitor.nextLine();
+            String senha = sc.nextLine();
 
-            if (senha.equals("teste1234!")) { // Verifica se a senha é igual a informada
+            if (senha.equals(password)) { // Verifica se a senha é igual a informada
                 if (arquivo.delete()) { // Tenta excluir o arquivo
                     System.out.println("Arquivo excluído com sucesso.");
                 } else {
