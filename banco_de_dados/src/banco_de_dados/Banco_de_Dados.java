@@ -1,11 +1,12 @@
 package banco_de_dados;
 
 import java.io.IOException;
-import java.io.File;
 import java.lang.Integer;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.Scanner;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 public class Banco_de_Dados {
 	
