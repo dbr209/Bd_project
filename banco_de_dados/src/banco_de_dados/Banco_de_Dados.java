@@ -110,11 +110,8 @@ public class Banco_de_Dados {
 		
 		String nameDB; // Nome database
 		String password; // Senha
-		String nameFile; // Nome do arquivo
 		String pathDB; // Caminho do database
 		String pathInfo; // Caminho do arquivo txt info da pasta das databases
-		String pathInfoDB; // Caminho do arquivo txt info do database especifica
-		int i;
 		
 		System.out.println("Digite o nome do Database: ");
 		nameDB = sc.nextLine(); // Pede o nome da database
