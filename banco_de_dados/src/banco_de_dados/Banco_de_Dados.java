@@ -7,12 +7,14 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 public class Banco_de_Dados {
 	
 	public String bd_info[];
 	String arquivo_path = "src\\banco_de_dados\\bd_root\\";
-	Get_Infos get = new Get_Infos();
+	Infos_Config get = new Infos_Config();
 	public static Scanner sc = new Scanner(System.in);
 	
 	public void inicializar() throws IOException{
@@ -102,5 +104,94 @@ public class Banco_de_Dados {
             System.out.println(-1); // Trata exceções
             
         }
+	}
+	
+	public void createDB() throws Exception {
+		
+		String nameDB; // Nome database
+		String password; // Senha
+		String nameFile; // Nome do arquivo
+		String pathDB; // Caminho do database
+		String pathInfo; // Caminho do arquivo txt info da pasta das databases
+		String pathInfoDB; // Caminho do arquivo txt info do database especifica
+		int i;
+		
+		System.out.println("Digite o nome do Database: ");
+		nameDB = sc.nextLine(); // Pede o nome da database
+		
+		int count = 0;
+		for(int j = 1; j < bd_info.length; j += 2) {
+			if(bd_info[j].equals(nameDB)) {
+				count += 1;
+			}
+		}
+		
+		while(count != 0) {
+				
+			System.out.println("Database ja existente.");
+				
+			System.out.println("Digite o nome do Database: ");
+			nameDB = sc.nextLine();
+			
+			count = 0;
+			for(int j = 0; j < bd_info.length; j++) {
+				if(bd_info[j].equals(nameDB)) {
+					count += 1;
+				}
+			}
+		} 
+		
+		pathDB = arquivo_path + nameDB + "\\";
+		pathInfo = pathDB + "\\" + "tabela_info.txt";
+		
+		File database = new File(pathDB); // Objeto do tipo File para trabalhar com a database
+			
+		// Caso não exista um database com nome identico ao que foi digitado, pede a senha do database ao usuario e cria a database
+		System.out.print("Digite sua senha: ");
+		password = sc.nextLine();
+		database.mkdir();
+		System.out.println("Database criado com sucesso.");
+
+		File info = new File(pathInfo); // Objeto do tipo File para trabalhar com o arquivo info da pasta das databasess
+		
+		//Cria um arquivo info para a pasta das databases
+		try {
+			info.createNewFile();
+		}
+		catch (Exception e) {
+			System.out.println("Erro ao criar o arquivo.");
+		}
+		
+		BufferedWriter writer = new BufferedWriter(new FileWriter(pathInfo)); // Objeto do tipo BufferedWriter que sera usado para escrever no arquivo info
+		
+		// Escreve a quantidade de databases no arquivo info
+		try {
+			writer.write("0\n");
+			writer.close();
+		}
+		catch (Exception e) {
+			System.out.println("Erro ao escrever no arquivo arquivo.");
+		}
+		
+		String newBdInfo[] = new String[bd_info.length + 2];
+        Path path = Path.of(arquivo_path + "bd_info");
+        
+        for(int j = 0;j < bd_info.length; j++) {
+        		newBdInfo[j] = bd_info[j];
+        }
+        
+        newBdInfo[bd_info.length] = nameDB;
+        newBdInfo[bd_info.length + 1] = password;
+        
+        newBdInfo[0] = "" + (Integer.parseInt(newBdInfo[0]) + 1);
+        bd_info = newBdInfo;
+
+        for(int k = 0; k < bd_info.length; k++) {
+        	if(k == 0) {
+        		Files.writeString(path, newBdInfo[k] + "\n");
+        	} else {
+        		Files.writeString(path, newBdInfo[k] + "\n", StandardOpenOption.APPEND);
+        	}
+        }	
 	}
 }
