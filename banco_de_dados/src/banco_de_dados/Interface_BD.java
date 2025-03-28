@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Interface_BD {
-	public static void main(String[] args) throws IOException{
+	public void interfacebd() throws IOException, Exception{
 		
 		System.out.println("===== Banco de Dados =====");
 		
