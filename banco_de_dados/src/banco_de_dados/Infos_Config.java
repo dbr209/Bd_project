@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class Get_Infos {
+public class Infos_Config{
 	public String[] get_bdroot() throws IOException {
 		String arquivo_path = "src\\banco_de_dados\\bd_root\\bd_info";
 
