@@ -45,8 +45,7 @@ public class Banco_de_Dados {
 		}
 	}
 	
-	public void excluir_database() {
-		
+	public void excluir_database() {	
         System.out.println("Qual Banco de Dados você deseja excluir: "); //Pergunta ao usuário qual arquivo deseja excluir
         String bdExcluir = sc.nextLine(); //Lê o arquivo
 
@@ -61,7 +60,7 @@ public class Banco_de_Dados {
             String senha = sc.nextLine();
             
             int i = 0;
-            while(!bd_info[i].equals(bdExcluir)) {
+            while(!bd_info[i].equals(bdExcluir)) { //Atualiza o índice do bd_info até que seja o que deseja excluir
             	i += 1;
             }
             
@@ -103,9 +102,34 @@ public class Banco_de_Dados {
         } catch (Exception e) {
             System.out.println(-1); // Trata exceções
             
-        }
+       	 }
 	}
-	
+	public void excluir_tabela(Scanner sc) {
+        System.out.println("Informe o banco de dados para excluir a tabela: ");
+        String nomeBD = sc.nextLine();
+
+        BancoDeDados banco = new BancoDeDados(nomeBD); //Novo objeto da classe banco de dados
+
+        if (!banco.existe()) { // Se o banco de dados não exstir
+            System.out.println("Banco de dados não encontrado.");
+            return;
+        }
+
+        System.out.println("Informe o nome da tabela que deseja excluir: "); //Se existir, pergunta o nome da tabela
+        String nomeTabela = sc.nextLine();
+
+        File tabela = new File(banco.getPath() + "\\" + nomeTabela + ".txt"); //Objeto file para pegar o caminho do banco + nome da tabela
+        
+        if (tabela.exists()) {
+            if(tabela.delete()) { //Tenta remover a tabela
+                System.out.println("Tabela removida com sucesso.");
+            } else {
+                System.out.println("Erro ao tentar excluir a tabela.");
+            }
+        } else {
+            System.out.println("Tabela não encontrada neste banco de dados.");
+        }
+    }
 	public void createDB() throws Exception {
 		
 		String nameDB; // Nome database
