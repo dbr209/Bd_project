@@ -191,4 +191,23 @@ public class Banco_de_Dados {
         	}
         }	
 	}
+
+	public void escreverTabela(String nameDB, String nameTabela) throws Exception {
+		
+		String path = "src\\banco_de_dados\\bd_root\\" + nameDB + "\\" + nameTabela + ".txt"; // Caminho da tabela que será escrita
+		BufferedWriter escrever = new BufferedWriter(new FileWriter(path,true)); // Classe usada para escrita na tabela
+
+		// Variavel que será lida e passada para o metodo para ser escrita na tabela
+		Scanner sc = new Scanner(System.in);
+		String conteudo;
+		
+		System.out.println("Digite abaixo dessa linha: ");
+		conteudo = sc.next();
+		
+		escrever.write(conteudo + " "); // Espaço que será incrementado na linha escrita para melhor organização da tabela
+		System.out.println("Terminado");
+		
+		escrever.close();
+		sc.close();
+	}
 }
