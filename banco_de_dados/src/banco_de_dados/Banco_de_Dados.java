@@ -103,33 +103,92 @@ public class Banco_de_Dados {
             System.out.println(-1); // Trata exceções
             
        	 }
+}
+	public void excluirTabela(Scanner sc) {
+	    System.out.println("Informe o banco de dados para excluir a tabela: ");
+	    String nomeBD = sc.nextLine(); //Pede o nome do banco pra verifcar se existe a tabela
+	
+	    BancoDeDados banco = new BancoDeDados(nomeBD); // Cria um objeto que representa o banco de dados
+	
+	    if (!banco.existe()) { //Verifica se o banco de dados NÃO existe
+	        System.out.println("Banco de dados não encontrado."); 
+	        return; 
+	    }
+
+	    System.out.println("Informe o nome da tabela que deseja excluir: ");
+	    String nomeTabela = sc.nextLine(); 
+	
+	    // Cria um objeto File que representa a tabela dentro do banco de dados
+	    File tabela = new File(banco.getPath() + "\\" + nomeTabela + ".txt");
+	
+	    if (tabela.exists()) { // Verifica se a tabela existe
+	        if (tabela.delete()) { // Tenta excluir a tabela
+	            System.out.println("Tabela removida com sucesso."); 
+	        } else {
+	            System.out.println("Erro ao tentar excluir a tabela."); 
+	        }
+	    } else {
+	        System.out.println("Tabela não encontrada neste banco de dados.");
+	    }
 	}
-	public void excluir_tabela(Scanner sc) {
-        System.out.println("Informe o banco de dados para excluir a tabela: ");
-        String nomeBD = sc.nextLine();
 
-        BancoDeDados banco = new BancoDeDados(nomeBD); //Novo objeto da classe banco de dados
+	public void excluirLinha(Scanner sc) {
+	    System.out.println("Informe o nome da tabela: ");
+	    String nomeTabela = sc.nextLine(); 
+	
+	    // Define o caminho do arquivo da tabela dentro do banco de dados
+	    Path pathTabela = Paths.get("src", "banco_de_dados", "bd_root", nomeTabela + ".txt");
+	
+	    if (!Files.exists(pathTabela)) { // Verifica se a tabela NÃO existe
+	        System.out.println("Tabela não encontrada."); 
+	        return; 
+	    }
+	
+	    System.out.println("Informe o conteúdo da linha que deseja excluir: "); //Se existir...
+	    String linhaExcluir = sc.nextLine(); // Lê o conteúdo exato da linha que será removida
+	
+	    try {
+	        // Conta quantas linhas existem na tabela e armazena esse número
+	        int quantLinhas = (int) Files.lines(pathTabela).count();
+	        String[] linhas = new String[quantLinhas];
+	
+	        // Abre o arquivo e armazena cada linha no array "linhas"
+	        try (Scanner scanner = new Scanner(pathTabela)) {
+	            int i = 0; 
+	            while (scanner.hasNextLine()) { // Enquanto houver linhas no arquivo para serem lidas...
+	                linhas[i++] = scanner.nextLine(); // Armazena a linha no array
+	            }
+	        }
+	      
+	        String[] novaTabela = new String[quantLinhas - 1]; 
+	        int aux = 0; 
+	      
+	        for (int i = 0; i < linhas.length; i++) {
+	            if (!linhas[i].equals(linhaExcluir)) { // Se a linha NÃO for a que deve ser excluída, copia no array "novaTabela"
+	                novaTabela[aux++] = linhas[i]; 
+	            }
+	        }
+	
+	        if (aux == quantLinhas) {
+	            System.out.println("Linha não encontrada na tabela.");
+	            return;
+	        }
+	        // Escreve o novo conteúdo no arquivo, sobrescrevendo as linhas antigas
+	        for (int k = 0; k < aux; k++) {
+	            if (k == 0) {
+	                Files.writeString(pathTabela, novaTabela[k] + "\n");
+	            } else {
+	                // Adiciona as demais linhas ao arquivo
+	                Files.writeString(pathTabela, novaTabela[k] + "\n", StandardOpenOption.APPEND);
+	            }
+	        }
+	        System.out.println("Linha removida com sucesso."); // Mensagem de sucesso
+	
+	    } catch (Exception e) {
+	        System.out.println("Erro ao atualizar a tabela."); // Exibe erro caso algo falhe
+	    }
+	}
 
-        if (!banco.existe()) { // Se o banco de dados não exstir
-            System.out.println("Banco de dados não encontrado.");
-            return;
-        }
-
-        System.out.println("Informe o nome da tabela que deseja excluir: "); //Se existir, pergunta o nome da tabela
-        String nomeTabela = sc.nextLine();
-
-        File tabela = new File(banco.getPath() + "\\" + nomeTabela + ".txt"); //Objeto file para pegar o caminho do banco + nome da tabela
-        
-        if (tabela.exists()) {
-            if(tabela.delete()) { //Tenta remover a tabela
-                System.out.println("Tabela removida com sucesso.");
-            } else {
-                System.out.println("Erro ao tentar excluir a tabela.");
-            }
-        } else {
-            System.out.println("Tabela não encontrada neste banco de dados.");
-        }
-    }
 	public void createDB() throws Exception {
 		
 		String nameDB; // Nome database
