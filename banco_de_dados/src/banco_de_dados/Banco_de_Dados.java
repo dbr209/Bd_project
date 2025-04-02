@@ -210,4 +210,43 @@ public class Banco_de_Dados {
 		escrever.close();
 		sc.close();
 	}
+
+	public void createFile(String dataBase) throws IOException {
+		
+		Scanner sc = new Scanner(System.in);
+		String path = "C:\\Users\\Élcia de Fátima\\OneDrive\\Área de Trabalho\\arquivostxt\\" + dataBase; // Caminho contcatenado com o local da database
+		String nameTabela; // Nome da tabela
+		
+		System.out.println("Digite o nome da tabela: ");
+		nameTabela = sc.nextLine(); // Nome da tabela sera escaneado do teclado
+		
+		path = "C:\\Users\\Élcia de Fátima\\OneDrive\\Área de Trabalho\\arquivostxt\\" + dataBase + "\\" + nameTabela + ".txt"; // Caminho contcatenado com o local da database e o nome da tabela
+		
+		File file = new File(path); // Objeto do tipo File criado com o path
+		
+		// Se não existir nenhuma tabela no endereço passado para o objeto file, a tabela é criada com sucesso
+		if(file.exists()==false) {
+			file.createNewFile();
+		}
+		
+		// Se o arquivo exisxir, pede ao usuario um novo nome para a tabela e enquanto o usuario digitar um nome de uma tabela ja existente um novo nome será solicitado
+		else if(file.exists()) {
+			
+			while(file.exists()) {
+				
+				System.out.println("A tabela ja existe");
+				
+				System.out.println("Digite o nome da tabela: ");
+				nameTabela = sc.nextLine();
+				
+				path = "C:\\Users\\Élcia de Fátima\\OneDrive\\Área de Trabalho\\arquivostxt\\" + dataBase + "\\" + nameTabela + ".txt";
+				file = new File(path);
+			}
+			// Apos o usuario digitar o nome da tabela corretamente, o arquivo será criado
+			file.createNewFile();
+		}
+		
+		System.out.println("Tabela criada com sucesso");
+		sc.close();
+	}
 }
