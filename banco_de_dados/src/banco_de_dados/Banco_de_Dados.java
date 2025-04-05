@@ -14,7 +14,9 @@ public class Banco_de_Dados {
 	
 	public String bd_info[];
 	String arquivo_path = "src\\banco_de_dados\\bd_root\\";
+	
 	Infos_Config get = new Infos_Config();
+	
 	public static Scanner sc = new Scanner(System.in);
 	
 	public void inicializar() throws IOException{
@@ -33,8 +35,8 @@ public class Banco_de_Dados {
 	public void listar_databases() {
 		System.out.println("");
 		
-		if(bd_info[0].equals("-2")) {
-			System.out.println("No Databases Available");
+		if(bd_info[0].equals("0")) {
+			System.out.println("Sem Banco de Dados Disponiveis.\n");
 		}
 		else {
 			int bd_total = (Integer.parseInt(bd_info[0]) * 2);
@@ -47,7 +49,7 @@ public class Banco_de_Dados {
 	
 	public void excluir_database() {
 		
-        System.out.println("Qual Banco de Dados você deseja excluir: "); //Pergunta ao usuário qual arquivo deseja excluir
+        System.out.printf("Qual Banco de Dados você deseja excluir: "); //Pergunta ao usuário qual arquivo deseja excluir
         String bdExcluir = sc.nextLine(); //Lê o arquivo
 
         File arquivo = new File(arquivo_path + bdExcluir); //Instanciona um objeto do arquivo lido
@@ -57,21 +59,30 @@ public class Banco_de_Dados {
                 System.out.println("Não existe nenhum arquivo com esse nome.");
                 return;
             }
-            System.out.println("Informe a senha do arquivo: "); //Se o arquivo existir, pergunta a senha para exclusão
+            System.out.printf("Informe a senha do arquivo: "); //Se o arquivo existir, pergunta a senha para exclusão
             String senha = sc.nextLine();
             
-            int i = 0;
+            int i = 1;
             while(!bd_info[i].equals(bdExcluir)) {
-            	i += 1;
+            	i += 2;
             }
             
             String password = bd_info[i+1];
             if (senha.equals(password)) { // Verifica se a senha é igual a informada
-                if (arquivo.delete()) { // Tenta excluir o arquivo
-                    System.out.println("Arquivo excluído com sucesso.");
-                } else {
-                    System.out.println("Erro ao excluir o arquivo."); // Se "arquivo.delete()" der false imprime isso
-                }
+            	if(get.get_tabela_info(bdExcluir)[0].equals("0")) {
+            		String pathTabelaInfo = arquivo_path + "\\" + bdExcluir + "\\" + "tabela_info.txt"; 
+            		File aqTabelaInfo = new File(pathTabelaInfo);
+            		aqTabelaInfo.delete();
+                	if (arquivo.delete()) { // Tenta excluir o arquivo
+                		System.out.println("Arquivo excluído com sucesso.");
+                	} else {
+                		System.out.println("Erro ao excluir o arquivo."); // Se "arquivo.delete()" der false imprime isso
+                		return;
+                	}
+            	} else {
+            		System.out.println("Database ainda contem tabelas");
+            		return;
+            	}
             } else {
                 System.out.println("Senha incorreta. O arquivo não foi excluído."); //Se a senha inserida for incorreta imprime isso
             }
@@ -113,7 +124,7 @@ public class Banco_de_Dados {
 		String pathDB; // Caminho do database
 		String pathInfo; // Caminho do arquivo txt info da pasta das databases
 		
-		System.out.println("Digite o nome do Database: ");
+		System.out.printf("Digite o nome do Database: ");
 		nameDB = sc.nextLine(); // Pede o nome da database
 		
 		int count = 0;
@@ -131,7 +142,7 @@ public class Banco_de_Dados {
 			nameDB = sc.nextLine();
 			
 			count = 0;
-			for(int j = 0; j < bd_info.length; j++) {
+			for(int j = 1; j < bd_info.length; j += 2) {
 				if(bd_info[j].equals(nameDB)) {
 					count += 1;
 				}
@@ -190,5 +201,37 @@ public class Banco_de_Dados {
         		Files.writeString(path, newBdInfo[k] + "\n", StandardOpenOption.APPEND);
         	}
         }	
+	}
+	
+	public void acessarDB() throws IOException{
+		System.out.println("\n========== Bancos de Dados ==========");
+		listar_databases();
+		System.out.printf("Qual Banco de Dados deseja acessar: ");
+		String op = sc.nextLine();
+		
+		int numDB = -1;
+		for(int i = 1; i < bd_info.length; i += 2) {
+			if(op.equals(bd_info[i])) {
+				numDB = i;
+				break;
+			}
+		}
+		
+		if(numDB != -1) {
+			
+			String password;
+			
+			System.out.printf("Digite a senha: ");
+			password = sc.nextLine();
+			
+			if(password.equals(bd_info[numDB + 1])) {
+				Interface_Tabela interfaceTabela = new Interface_Tabela();
+				interfaceTabela.interfaceTBL(bd_info[numDB], sc);
+			} else {
+				System.out.println("Senha errada.\n");
+			}
+		} else {
+			System.out.println("Bando de Dados Inválido.\n");
+		}
 	}
 }
