@@ -211,9 +211,9 @@ public class Banco_de_Dados {
 		
 		int numDB = -1;
 		int i = 1;
-		while(i < tabela_info.length && numTBL == -1) {
+		while(i < bd_info.length && numDB == -1) {
 		if(op.equals(tabela_info[i])) {
-			numTBL = i;
+			numDB = i;
 		}
 		i++;
 		}
