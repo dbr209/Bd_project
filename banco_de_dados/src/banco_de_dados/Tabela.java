@@ -129,18 +129,19 @@ public class Tabela{
 		    }
 	}
 	
-	public void acessarTable() throws IOException {
+	public void acessarTable(){
 		System.out.println("\n========== TABELAS ==========");
 		listarTables();
 		System.out.printf("Qual Tabela deseja acessar: ");
 		String op = sc.nextLine();
 		
 		int numTBL = -1;
-		for(int i = 1; i < tabela_info.length; i++) {
-			if(op.equals(tabela_info[i])) {
-				numTBL = i;
-				break;
-			}
+		int i = 1;
+		while(i < tabela_info.length && numTBL == -1) {
+		if(op.equals(tabela_info[i])) {
+			numTBL = i;
+		}
+		i++;
 		}
 		
 		if(numTBL != -1) {
