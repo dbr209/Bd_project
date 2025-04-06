@@ -210,17 +210,16 @@ public class Banco_de_Dados {
 		String op = sc.nextLine();
 		
 		int numDB = -1;
-		for(int i = 1; i < bd_info.length; i += 2) {
-			if(op.equals(bd_info[i])) {
-				numDB = i;
-				break;
-			}
+		int i = 1;
+		while(i < tabela_info.length && numTBL == -1) {
+		if(op.equals(tabela_info[i])) {
+			numTBL = i;
+		}
+		i++;
 		}
 		
 		if(numDB != -1) {
-			
 			String password;
-			
 			System.out.printf("Digite a senha: ");
 			password = sc.nextLine();
 			
