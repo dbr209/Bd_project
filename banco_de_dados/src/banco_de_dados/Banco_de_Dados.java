@@ -1,6 +1,5 @@
 package banco_de_dados;
 
-import java.io.IOException;
 import java.lang.Integer;
 import java.util.Scanner;
 import java.io.File;
@@ -16,19 +15,14 @@ public class Banco_de_Dados {
 	String arquivo_path = "src\\banco_de_dados\\bd_root\\";
 	
 	Infos_Config get = new Infos_Config();
-	
+
 	public static Scanner sc = new Scanner(System.in);
 	
-	public void inicializar() throws IOException{
+	public void inicializar() throws Exception {
 		
-		try {
-			bd_info = get.get_bdroot();
-			if(bd_info[0].equals("-1")) {
-				System.out.println("ERROR");
-			}
-		}
-		catch (IOException e) {
-			System.out.println("IOException");
+		bd_info = get.get_bdroot();
+		if(bd_info[0].equals("-1")) {
+				return;
 		}
 	}
 	
@@ -47,73 +41,72 @@ public class Banco_de_Dados {
 		}
 	}
 	
-	public void excluir_database() {
+	public void excluir_database() throws Exception{
 		
         System.out.printf("Qual Banco de Dados você deseja excluir: "); //Pergunta ao usuário qual arquivo deseja excluir
         String bdExcluir = sc.nextLine(); //Lê o arquivo
 
         File arquivo = new File(arquivo_path + bdExcluir); //Instanciona um objeto do arquivo lido
         
-        try {
-            if (!arquivo.exists()) { // Verifica se o arquivo não existe
-                System.out.println("Não existe nenhum arquivo com esse nome.");
-                return;
-            }
-            System.out.printf("Informe a senha do arquivo: "); //Se o arquivo existir, pergunta a senha para exclusão
-            String senha = sc.nextLine();
+        if (!arquivo.exists()) { // Verifica se o arquivo não existe
+        	System.out.println("Não existe nenhum arquivo com esse nome.");
+            return;
+        }
+        
+        System.out.printf("Informe a senha do arquivo: "); //Se o arquivo existir, pergunta a senha para exclusão
+        String senha = sc.nextLine();
             
-            int i = 1;
-            while(!bd_info[i].equals(bdExcluir)) {
-            	i += 2;
-            }
+        int i = 1;
+        while(!bd_info[i].equals(bdExcluir)) {
+        	i += 2;
+        }
             
-            String password = bd_info[i+1];
-            if (senha.equals(password)) { // Verifica se a senha é igual a informada
-            	if(get.get_tabela_info(bdExcluir)[0].equals("0")) {
-            		String pathTabelaInfo = arquivo_path + "\\" + bdExcluir + "\\" + "tabela_info.txt"; 
-            		File aqTabelaInfo = new File(pathTabelaInfo);
-            		aqTabelaInfo.delete();
-                	if (arquivo.delete()) { // Tenta excluir o arquivo
-                		System.out.println("Arquivo excluído com sucesso.");
-                	} else {
-                		System.out.println("Erro ao excluir o arquivo."); // Se "arquivo.delete()" der false imprime isso
-                		return;
-                	}
-            	} else {
-            		System.out.println("Database ainda contem tabelas");
-            		return;
-            	}
+        String password = bd_info[i+1];
+        if (senha.equals(password)) { // Verifica se a senha é igual a informada
+            if(get.get_tabela_info(bdExcluir)[0].equals("0")) {
+            	
+            	String pathTabelaInfo = arquivo_path + "\\" + bdExcluir + "\\" + "tabela_info.txt"; 
+            	File aqTabelaInfo = new File(pathTabelaInfo);
+            	aqTabelaInfo.delete();
+            	
+                if (arquivo.delete()) { // Tenta excluir o arquivo
+               		System.out.println("Arquivo excluído com sucesso.");
+                } else {
+                	System.out.println("Erro ao excluir o arquivo."); // Se "arquivo.delete()" der false imprime isso
+                	return;
+               	}
+                
             } else {
-                System.out.println("Senha incorreta. O arquivo não foi excluído."); //Se a senha inserida for incorreta imprime isso
+            	System.out.println("Database ainda contem tabelas");
+            	return;
             }
             
-            // Alterar o bd_info
+        } else {
+        	System.out.println("Senha incorreta. O arquivo não foi excluído."); //Se a senha inserida for incorreta imprime isso
+        }
             
-            String newBdInfo[] = new String[bd_info.length - 2];
-            Path path = Path.of(arquivo_path + "bd_info");
+        // Alterar o bd_info
             
-            int aux = 0;
-            for(int j = 0;j < bd_info.length; j++) {
-            	if(j != i && j != i + 1) {
-            		newBdInfo[aux] = bd_info[j];
-            		aux += 1;
-            	}
+        String newBdInfo[] = new String[bd_info.length - 2];
+        Path path = Path.of(arquivo_path + "bd_info");
+            
+        int aux = 0;
+        for(int j = 0;j < bd_info.length; j++) {
+            if(j != i && j != i + 1) {
+            	newBdInfo[aux] = bd_info[j];
+            	aux += 1;
             }
+        }
             
-            newBdInfo[0] = "" + (Integer.parseInt(newBdInfo[0]) - 1);
-            bd_info = newBdInfo;
+        newBdInfo[0] = "" + (Integer.parseInt(newBdInfo[0]) - 1);
+        bd_info = newBdInfo;
 
-            for(int k = 0; k < bd_info.length; k++) {
-            	if(k == 0) {
-            		Files.writeString(path, newBdInfo[k] + "\n");
-            	} else {
-            		Files.writeString(path, newBdInfo[k] + "\n", StandardOpenOption.APPEND);
-            	}
+        for(int k = 0; k < bd_info.length; k++) {
+            if(k == 0) {
+            	Files.writeString(path, newBdInfo[k] + "\n");
+            } else {
+            	Files.writeString(path, newBdInfo[k] + "\n", StandardOpenOption.APPEND);
             }
-            
-        } catch (Exception e) {
-            System.out.println(-1); // Trata exceções
-            
         }
 	}
 	
@@ -163,23 +156,16 @@ public class Banco_de_Dados {
 		File info = new File(pathInfo); // Objeto do tipo File para trabalhar com o arquivo info da pasta das databasess
 		
 		//Cria um arquivo info para a pasta das databases
-		try {
-			info.createNewFile();
-		}
-		catch (Exception e) {
+		if(!info.createNewFile()) {
 			System.out.println("Erro ao criar o arquivo.");
+			return;
 		}
-		
+
 		BufferedWriter writer = new BufferedWriter(new FileWriter(pathInfo)); // Objeto do tipo BufferedWriter que sera usado para escrever no arquivo info
 		
 		// Escreve a quantidade de databases no arquivo info
-		try {
-			writer.write("0\n");
-			writer.close();
-		}
-		catch (Exception e) {
-			System.out.println("Erro ao escrever no arquivo arquivo.");
-		}
+		writer.write("0\n");
+		writer.close();
 		
 		String newBdInfo[] = new String[bd_info.length + 2];
         Path path = Path.of(arquivo_path + "bd_info");
@@ -203,7 +189,7 @@ public class Banco_de_Dados {
         }	
 	}
 	
-	public void acessarDB() throws IOException{
+	public void acessarDB() throws Exception{
 		System.out.println("\n========== Bancos de Dados ==========");
 		listar_databases();
 		System.out.printf("Qual Banco de Dados deseja acessar: ");
@@ -212,14 +198,16 @@ public class Banco_de_Dados {
 		int numDB = -1;
 		int i = 1;
 		while(i < bd_info.length && numDB == -1) {
-		if(op.equals(tabela_info[i])) {
-			numDB = i;
-		}
-		i++;
+			if(op.equals(bd_info[i])) {
+				numDB = i;
+			}
+			i += 2;
 		}
 		
 		if(numDB != -1) {
+			
 			String password;
+			
 			System.out.printf("Digite a senha: ");
 			password = sc.nextLine();
 			
