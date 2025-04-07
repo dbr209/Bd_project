@@ -2,12 +2,10 @@ package banco_de_dados;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.util.Scanner;
 
@@ -20,20 +18,18 @@ public class Tabela{
 	public String tabela_info[];
 	String arquivo_path = "src\\banco_de_dados\\bd_root\\";
 	
-	public void inicializar(String novo_nameDB, Scanner novo_sc) throws IOException{
+	public void inicializar(String novo_nameDB, Scanner novo_sc) throws Exception{
 			
-		try {
-			nameDB = novo_nameDB;
-			sc = novo_sc;
-			tabela_info = get.get_tabela_info(nameDB);
-		}
-		catch (IOException e) {
-			System.out.println("IOException");
+		nameDB = novo_nameDB;
+		sc = novo_sc;
+		tabela_info = get.get_tabela_info(nameDB);
 		
+		if(tabela_info[0].equals("-1")) {
+			return;
 		}
 	}
 	
-	public void createTable() throws IOException {
+	public void createTable() throws Exception {
 		String path = arquivo_path + "\\" + nameDB; // Caminho contcatenado com o local da database
 		String nameTabela; // Nome da tabela
 		
@@ -53,7 +49,7 @@ public class Tabela{
 		else if(file.exists()) {
 			
 			while(file.exists()) {
-					System.out.println("A tabela ja existe");
+				System.out.println("A tabela ja existe");
 				
 				System.out.println("Digite o nome da tabela: ");
 				nameTabela = sc.nextLine();
@@ -61,6 +57,7 @@ public class Tabela{
 				path = arquivo_path + nameDB + "\\" + nameTabela + ".txt";
 				file = new File(path);
 			}
+			
 			// Apos o usuario digitar o nome da tabela corretamente, o arquivo será criado
 			file.createNewFile();
 		}
@@ -88,60 +85,59 @@ public class Tabela{
         }
 	}
 	
-	public void excluirTable() throws IOException{
+	public void excluirTable() throws Exception{
 		System.out.println("Informe o nome da tabela que deseja excluir: ");
 		String nomeTabela = sc.nextLine(); 
 		
 		// Cria um objeto File que representa a tabela dentro do banco de dados
 		File tabela = new File(arquivo_path + "\\"  + nameDB + "\\" + nomeTabela + ".txt");
 		
-		    if (tabela.exists()) { // Verifica se a tabela existe
-		        if (tabela.delete()) { // Tenta excluir a tabela
-		            System.out.println("Tabela removida com sucesso."); 
+		if (tabela.exists()) { // Verifica se a tabela existe
+			if (tabela.delete()) { // Tenta excluir a tabela
+				System.out.println("Tabela removida com sucesso."); 
 		            
-		            String newTBLInfo[] = new String[tabela_info.length - 1];
-		            Path path = Path.of(arquivo_path + "\\" + nameDB + "\\" + "tabela_info.txt");
+		        String newTBLInfo[] = new String[tabela_info.length - 1];
+		        Path path = Path.of(arquivo_path + "\\" + nameDB + "\\" + "tabela_info.txt");
 		            
-		            int aux = 0;
-		            for(int i = 0;i < tabela_info.length; i++) {
-		            	if(!tabela_info[i].equals(nomeTabela)) {
-		            		newTBLInfo[aux] = tabela_info[i];
-		            		aux += 1;
-		            	}
+		        int aux = 0;
+		        for(int i = 0;i < tabela_info.length; i++) {
+		            if(!tabela_info[i].equals(nomeTabela)) {
+		            	newTBLInfo[aux] = tabela_info[i];
+		            	aux += 1;
 		            }
-		            
-		            newTBLInfo[0] = "" + (Integer.parseInt(newTBLInfo[0]) - 1);
-		            tabela_info = newTBLInfo;
-
-		            for(int j = 0; j < tabela_info.length; j++) {
-		            	if(j == 0) {
-		            		Files.writeString(path, newTBLInfo[j] + "\n");
-		            	} else {
-		            		Files.writeString(path, newTBLInfo[j] + "\n", StandardOpenOption.APPEND);
-		            	}
-		            }
-		            
-		        } else {
-		            System.out.println("Erro ao tentar excluir a tabela."); 
 		        }
+		            
+		        newTBLInfo[0] = "" + (Integer.parseInt(newTBLInfo[0]) - 1);
+		        tabela_info = newTBLInfo;
+
+		        for(int j = 0; j < tabela_info.length; j++) {
+		            if(j == 0) {
+		            	Files.writeString(path, newTBLInfo[j] + "\n");
+		            } else {
+		            	Files.writeString(path, newTBLInfo[j] + "\n", StandardOpenOption.APPEND);
+		            }
+		        }
+		            
 		    } else {
-		        System.out.println("Tabela não encontrada neste banco de dados.");
+		    	System.out.println("Erro ao tentar excluir a tabela."); 
 		    }
+		} else {
+			System.out.println("Tabela não encontrada neste banco de dados.");
+		}
 	}
 	
-	public void acessarTable(){
+	public void acessarTable() throws Exception {
 		System.out.println("\n========== TABELAS ==========");
 		listarTables();
 		System.out.printf("Qual Tabela deseja acessar: ");
 		String op = sc.nextLine();
 		
 		int numTBL = -1;
-		int i = 1;
-		while(i < tabela_info.length && numTBL == -1) {
-		if(op.equals(tabela_info[i])) {
-			numTBL = i;
-		}
-		i++;
+		for(int i = 1; i < tabela_info.length; i++) {
+			if(op.equals(tabela_info[i])) {
+				numTBL = i;
+				break;
+			}
 		}
 		
 		if(numTBL != -1) {
@@ -164,7 +160,7 @@ public class Tabela{
 		}
 	}
 	
-	public void interfaceEditRemoveLine(String nameTBL) throws IOException{
+	public void interfaceEditRemoveLine(String nameTBL) throws Exception{
 		boolean sair = false;
 		do {
 			System.out.println("========== " + nameTBL + " ==========");
@@ -188,28 +184,30 @@ public class Tabela{
 		} while(sair == false);
 	}
 	
-	public void lerTable(String nameTBL) {
+	public void lerTable(String nameTBL) throws Exception {
 		String arquivoTablePath = arquivo_path + "//" + nameDB + "\\" + nameTBL + ".txt";
 		
-		try {
-			File aq = new File(arquivoTablePath); // Abre o arquivo
-			Scanner leitor = new Scanner(aq); // Escaneia o arquivo
-			
-			int i = 0;
-			while(leitor.hasNextLine()) {
-				System.out.println(i + ". " + leitor.nextLine());
-				i++;
-			}
-			
-			leitor.close();
-			
-		} catch(FileNotFoundException e) {
-			System.out.println("File Not Found");
+		File aq = new File(arquivoTablePath); // Abre o arquivo
+		
+		if(!aq.exists()) {
+			System.out.println("Error ao ler tabela.");
+			return;
 		}
+		Scanner leitor = new Scanner(aq); // Escaneia o arquivo
+			
+		int i = 0;
+		while(leitor.hasNextLine()) {
+			System.out.println(i + ". " + leitor.nextLine());
+			i++;
+		}
+			
+		leitor.close();
 	}
 	
-	public void createNewLine(String nameTabela) throws IOException{
+	public void createNewLine(String nameTabela) throws Exception{
 		String path = "src\\banco_de_dados\\bd_root\\" + nameDB + "\\" + nameTabela + ".txt"; // Caminho da tabela que será escrita
+		
+		
 		BufferedWriter escrever = new BufferedWriter(new FileWriter(path,true)); // Classe usada para escrita na tabela
 
 		// Variavel que será lida e passada para o metodo para ser escrita na tabela
@@ -225,7 +223,7 @@ public class Tabela{
 		escrever.close();
 	}
 	
-	public void excluirLinha(String nomeTabela) {
+	public void excluirLinha(String nomeTabela) throws Exception {
 
 	    // Define o caminho do arquivo da tabela dentro do banco de dados
 	    Path pathTabela = Paths.get("src", "banco_de_dados", "bd_root", nameDB, nomeTabela + ".txt");
@@ -233,45 +231,49 @@ public class Tabela{
 	    System.out.println("Informe o conteúdo da linha que deseja excluir: "); //Se existir...
 	    String linhaExcluir = sc.nextLine(); // Lê o conteúdo exato da linha que será removida
 	    
-	    try {
-	        // Conta quantas linhas existem na tabela e armazena esse número
-	        int quantLinhas = (int) Files.lines(pathTabela).count();
-	        String[] linhas = new String[quantLinhas];
+	    // Conta quantas linhas existem na tabela e armazena esse número
+	    int quantLinhas = (int) Files.lines(pathTabela).count();
+	    String[] linhas = new String[quantLinhas];
 	
-	        // Abre o arquivo e armazena cada linha no array "linhas"
-	        try (Scanner scanner = new Scanner(pathTabela)) {
-	            int i = 0; 
-	            while (scanner.hasNextLine()) { // Enquanto houver linhas no arquivo para serem lidas...
-	                linhas[i++] = scanner.nextLine(); // Armazena a linha no array
-	            }
-	        }
-	      
-	        String[] novaTabela = new String[quantLinhas - 1]; 
-	        int aux = 0; 
-	      
-	        for (int i = 0; i < linhas.length; i++) {
-	            if (!linhas[i].equals(linhaExcluir)) { // Se a linha NÃO for a que deve ser excluída, copia no array "novaTabela"
-	                novaTabela[aux++] = linhas[i]; 
-	            }
-	        }
-	
-	        if (aux == quantLinhas) {
-	            System.out.println("Linha não encontrada na tabela.");
-	            return;
-	        }
-	     // Escreve o novo conteúdo no arquivo, sobrescrevendo as linhas antigas
-	        for (int k = 0; k < aux; k++) {
-	            if (k == 0) {
-	                Files.writeString(pathTabela, novaTabela[k] + "\n");
-	            } else {
-	                // Adiciona as demais linhas ao arquivo
-	                Files.writeString(pathTabela, novaTabela[k] + "\n", StandardOpenOption.APPEND);
-	            }
-	        }
-	        System.out.println("Linha removida com sucesso."); // Mensagem de sucesso
-	
-	    } catch (Exception e) {
-	        System.out.println("Erro ao atualizar a tabela."); // Exibe erro caso algo falhe
+	    // Abre o arquivo e armazena cada linha no array "linhas"
+	    Scanner scanner = new Scanner(pathTabela);
+	    int auxiliar = 0; 
+	    while (scanner.hasNextLine()) { // Enquanto houver linhas no arquivo para serem lidas...
+	    	linhas[auxiliar++] = scanner.nextLine(); // Armazena a linha no array
 	    }
+	   
+	    String[] novaTabela = new String[quantLinhas - 1]; 
+	    int aux = 0; 
+	      
+	    for (int i = 0; i < linhas.length; i++) {
+	    	if (!linhas[i].equals(linhaExcluir)) { // Se a linha NÃO for a que deve ser excluída, copia no array "novaTabela"
+	    		novaTabela[aux++] = linhas[i]; 
+	        }
+	    }
+	
+	    if (aux == quantLinhas) {
+	    	System.out.println("Linha não encontrada na tabela.");
+	    	scanner.close();
+	        return;
+	    }
+	    
+	    if(quantLinhas == 1) {
+	    	Files.writeString(pathTabela, "");
+	    	scanner.close();
+	    	return;
+	    }
+	    
+	     // Escreve o novo conteúdo no arquivo, sobrescrevendo as linhas antigas
+	    for (int k = 0; k < aux; k++) {
+	    	if (k == 0) {
+	    		Files.writeString(pathTabela, novaTabela[k] + "\n");
+	        } else {
+	        	// Adiciona as demais linhas ao arquivo
+	        	Files.writeString(pathTabela, novaTabela[k] + "\n", StandardOpenOption.APPEND);
+	        }
+	    }
+	    
+	    System.out.println("Linha removida com sucesso."); // Mensagem de sucesso
+	    scanner.close();
 	}
 }
