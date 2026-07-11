@@ -5,5 +5,6 @@ Construido em Java e utiliza esquemas de diretórios e arquivos para estruturar 
 
 Futuras Atualizações
 
-# [ ] Refatorar o codigo inteiro kkkkkkk
-# [ ] Criar um interpretador para um linguagem para o BD (base: SQL)
+  [ ] Refatorar o codigo inteiro kkkkkkk
+  
+  [ ] Criar um interpretador para um linguagem para o BD (base: SQL)
